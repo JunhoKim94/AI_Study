@@ -18,27 +18,30 @@ class LogisticRegression:
         #print(x.shape,y.shape)
         #print(epochs,num%batch_size)
         for epoch in range(epochs):
+            rand = np.arange(x.shape[0])
+            np.random.shuffle(rand)
+            #shuffle the data
+            x = x[rand]
+            y = y[rand]
+
             for steps in range(num // batch_size):
-                W_T = np.transpose(self.W)
-                #print(self.W.shape,W_T.shape)
-                #self.W.reshape(1,self.num_features)
+
                 X = x[batch_size*steps:batch_size*(steps+1),:]
-                Y = y[batch_size*steps:batch_size*(steps+1)]
-                #X = X.reshape(len(X[0,:]),len(X[:,0]))
-                X = np.transpose(X)
-                #print(X.shape)
-                hypothesis = self._sigmoid(Y - np.matmul(W_T,X))
+                Y = y[batch_size*steps:batch_size*(steps+1)].reshape(batch_size,1)
+
+                hypothesis = self._sigmoid(np.matmul(X,self.W))
+                
                 loss = Y*np.log(hypothesis)+(1-Y)*np.log(1-hypothesis)
                 cost = -(1/batch_size)*np.sum(loss)
-                #print(steps)
-                grad =  np.sum(hypothesis*(1-hypothesis)*X,axis=1)
-                #grad = grad.reshape(8,1)
-                #print(grad.shape,self.W.shape)
+
+                grad =  np.sum(np.dot((-Y+hypothesis).T,X),axis=1)/batch_size
+
                 self.W = optim.update(self.W, grad, lr)
             if epoch % 1000 == 0:
+                print(grad)
                 print("weight:",self.W)
                 print("Loss:",cost)
-        final_loss = cost
+            final_loss = cost
 
 
 
@@ -56,14 +59,9 @@ class LogisticRegression:
         # Otherwise, it predicts as 0
 
         # ========================= EDIT HERE ========================
-        W_T = np.transpose(self.W)
-        x_T = np.transpose(x)
-        p = self._sigmoid(np.matmul(W_T,x_T))
-        if p > threshold:
-            pred = 1
-        else:
-            pred = 0
 
+        p = self._sigmoid(np.matmul(x,self.W))
+        pred = 1*(p > threshold).reshape(x.shape[0])
 
 
         # ============================================================

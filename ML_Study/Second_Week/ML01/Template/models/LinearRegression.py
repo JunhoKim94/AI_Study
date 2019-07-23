@@ -18,6 +18,12 @@ class LinearRegression:
         #print(x.shape,y.shape)
         #print(epochs,num%batch_size)
         for epoch in range(epochs):
+            rand = np.arange(x.shape[0])
+            np.random.shuffle(rand)
+            #shuffle the data
+            x = x[rand]
+            y = y[rand]
+            
             for steps in range(num // batch_size):
                 W_T = np.transpose(self.W)
                 #print(W_T.shape)

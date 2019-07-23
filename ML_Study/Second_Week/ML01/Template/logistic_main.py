@@ -14,7 +14,7 @@ DATA_NAME = 'Titanic'
 # HYPERPARAMETERS
 batch_size = 779
 num_epochs = 10000
-learning_rate = 0.01
+learning_rate = 0.0001
 epsilon = 0.001
 gamma = 0.1
 
