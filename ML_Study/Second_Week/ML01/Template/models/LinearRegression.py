@@ -25,17 +25,13 @@ class LinearRegression:
             y = y[rand]
             
             for steps in range(num // batch_size):
-                W_T = np.transpose(self.W)
-                #print(W_T.shape)
-                #self.W.reshape(1,self.num_features)
                 X = x[batch_size*steps:batch_size*(steps+1),:]
-                Y = y[batch_size*steps:batch_size*(steps+1)]
-                #X = X.reshape(len(X[0,:]),len(X[:,0]))
-                X = np.transpose(X)
-                loss = np.square(Y - np.matmul(W_T,X))/2
+                Y = y[batch_size*steps:batch_size*(steps+1)].reshape(batch_size,1)
+
+                loss = np.square(Y - np.matmul(X,self.W))/2
                 loss_sum = (1/batch_size)*np.sum(loss)
                 #print(steps)
-                grad =  -np.sum((Y-np.matmul(W_T,X))*X,axis=1)
+                grad =  -np.sum(np.dot((Y-np.matmul(X,self.W)).T,X),axis=1)
                 #grad = grad.reshape(8,1)
                 #print(grad,self.W.shape)
                 self.W = optim.update(self.W, grad, lr)
@@ -50,9 +46,8 @@ class LinearRegression:
 
     def eval(self, x):
         x = x[:,1:]
-        W_T = np.transpose(self.W)
-        x_T = np.transpose(x)
-        pred = np.matmul(W_T,x_T) 
+
+        pred = np.matmul(x,self.W).reshape(x.shape[0])
 
         # Evaluation Function
         # Given the input 'x', the function should return prediction for 'x'
