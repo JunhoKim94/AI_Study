@@ -4,7 +4,7 @@ class SoftmaxClassifier:
     def __init__(self, num_features, num_label):
         self.num_features = num_features
         self.num_label = num_label
-        self.W = np.zeros((self.num_features, self.num_label))
+        self.W = np.random.random((self.num_features, self.num_label))
 
     def train(self, x, y, epochs, batch_size, lr, optimizer):
         """
@@ -39,6 +39,7 @@ class SoftmaxClassifier:
         print('========== TRAINING START ==========')
         final_loss = None   # loss of final epoch
         num_data, num_feat = x.shape
+        print(num_feat)
         losses = []
         for epoch in range(1, epochs + 1):
             batch_losses = []   # list for storing minibatch losses
@@ -53,18 +54,22 @@ class SoftmaxClassifier:
 
                 hypothesis = self._softmax(np.matmul(X,self.W)) #가로축 방향으로 softmax 진행
                 #need to one-hot encoding
-                encod = np.eye(num_feat)
+                encod = np.eye(3)
                 one_hot = encod[Y[:]]
                 #loss fun
-                loss = one_hot*np.log(hypothesis)
-
+                loss = self.softmax_loss(hypothesis,one_hot)/batch_size
+                batch_losses.append(loss)
+                grad = self.compute_grad(X,self.W,hypothesis,one_hot)/batch_size
+                self.W =optimizer.update(self.W,grad,lr)
+    
 
 
         # ============================================================
             epoch_loss = sum(batch_losses) / len(batch_losses)  # epoch loss
             # print loss every 10 epoch
-            if epoch % 10 == 0:
+            if epoch % 1000 == 0:
                 print('Epoch %d : Loss = %.4f' % (epoch, epoch_loss))
+                print(self.W)
             # store losses
             losses.append(epoch_loss)
         final_loss = losses[-1]
@@ -85,7 +90,8 @@ class SoftmaxClassifier:
         """
         pred = None
         # ========================= EDIT HERE ========================
-
+        hypothesis = self._softmax(np.matmul(x,self.W))
+        hypothesis[:, np.argmax(hypothesis ,axis = 1)]
 
 
 
@@ -112,8 +118,8 @@ class SoftmaxClassifier:
         softmax_loss = 0.0
         # ========================= EDIT HERE ========================
 
-
-
+        loss = -np.sum(label * np.log(prob))
+        softmax_loss = loss
 
 
 
@@ -143,11 +149,12 @@ class SoftmaxClassifier:
         grad_weight = np.zeros_like(weight, dtype=np.float32) # (D, C)
         # ========================= EDIT HERE ========================
 
-
-
-
-
-
+        grad = prob[:, np.argmax(prob ,axis = 1)] - 1
+        
+        grad = np.eye(grad.shape[0]) * grad
+        grad = np.sum(grad,axis = 0)
+        grad = x*grad.reshape(len(grad),1)
+        grad_weight = np.sum(grad , axis = 0).reshape(weight.shape[0],1)
 
 
         # ============================================================
@@ -167,9 +174,10 @@ class SoftmaxClassifier:
         """
         softmax = None
         # ========================= EDIT HERE ========================
-
-
-
+        x1 = np.exp(x)
+        x2 = np.sum(np.exp(x), axis = 1)
+        x2 = x2.reshape(len(x2),1)
+        softmax = x1/x2
 
 
 

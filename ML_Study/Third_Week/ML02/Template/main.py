@@ -12,8 +12,8 @@ np.random.seed(428)
 DATA_NAME = 'Iris'
 
 # HYPERPARAMETERS
-batch_size = 20
-num_epochs = 30
+batch_size = 60
+num_epochs = 3000
 learning_rate = 0.01
 epsilon = 0.001
 gamma = 0.05
