@@ -54,7 +54,7 @@ class SoftmaxClassifier:
 
                 hypothesis = self._softmax(np.matmul(X,self.W)) #가로축 방향으로 softmax 진행
                 #need to one-hot encoding
-                encod = np.eye(3)
+                encod = np.eye(self.num_label)
                 one_hot = encod[Y[:]]
                 #loss fun
                 loss = self.softmax_loss(hypothesis,one_hot)/batch_size
@@ -91,7 +91,7 @@ class SoftmaxClassifier:
         pred = None
         # ========================= EDIT HERE ========================
         hypothesis = self._softmax(np.matmul(x,self.W))
-        hypothesis[:, np.argmax(hypothesis ,axis = 1)]
+        pred =  np.argmax(hypothesis ,axis = 1)
 
 
 
@@ -149,12 +149,9 @@ class SoftmaxClassifier:
         grad_weight = np.zeros_like(weight, dtype=np.float32) # (D, C)
         # ========================= EDIT HERE ========================
 
-        grad = prob[:, np.argmax(prob ,axis = 1)] - 1
-        
-        grad = np.eye(grad.shape[0]) * grad
-        grad = np.sum(grad,axis = 0)
-        grad = x*grad.reshape(len(grad),1)
-        grad_weight = np.sum(grad , axis = 0).reshape(weight.shape[0],1)
+        grad = prob - label
+        grad = np.dot(x.T,grad)
+        grad_weight = grad
 
 
         # ============================================================

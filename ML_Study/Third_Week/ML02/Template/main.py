@@ -9,11 +9,11 @@ np.random.seed(428)
 # 3. Choose Optimizer : SGD / Momentum / RMSProp
 
 # DATA
-DATA_NAME = 'Iris'
+DATA_NAME = 'Digit'
 
 # HYPERPARAMETERS
 batch_size = 60
-num_epochs = 3000
+num_epochs = 30000
 learning_rate = 0.01
 epsilon = 0.001
 gamma = 0.05
